@@ -24,4 +24,8 @@ jobs:
     
     steps:
      - name: Build Docker image
-       run: docker -d run -p  8080:8080 --name ee_python my-image-name:$(date +%s)
+       run: docker run -d -p  8080:8080 --name ee_python my-image-name:$(date +%s)
+
+    dependon:
+    
+    
