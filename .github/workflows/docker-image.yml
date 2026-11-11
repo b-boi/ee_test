@@ -14,10 +14,18 @@ jobs:
 
     runs-on: [self-hosted]
 
+    outputs:
+      image_name: ${{ steps.image.outputs.image_name }}
+      image_tag: ${{ steps.image.outputs.image_tag }}
+
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Build Docker image
+      id: image 
+      run: |
+          echo "image_name=my-image-name" >> $GITHUB_OUTPUT
+          echo "image_tag=$(date +%s)" >> $GITHUB_OUTPUT
+          docker build . --file Dockerfile --tag my-image-name:$(date +%s)
   
   login:
     needs: build 
@@ -36,7 +44,8 @@ jobs:
     
     steps:
      - name: Build Docker image
-       run: docker run -d -p  8080:8080 --name ee_python --image_name: ${{ needs.build.outputs.image_name }}:${{ needs.build.outputs.image_tag }}
+       run: | 
+         docker run -d -p  8080:8080 --name ee_python ${{ needs.build.outputs.image_name }}:${{ needs.build.outputs.image_tag }}
   
     
     
